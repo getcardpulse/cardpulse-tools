@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Should You Grade Your Card? | CardPulse</title>
+<meta name="description" content="A free, honest grading decision tool for card collectors. No agenda, no upsell. Just the math.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=DM+Mono:wght@400;500&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--card:#111827;--input-bg:#1a2235;--input-focus:#1e2a40;--border:#2a3550;--border-hi:#2dd4a0;--teal:#2dd4a0;--teal-soft:rgba(45,212,160,0.12);--teal-glow:rgba(45,212,160,0.3);--txt:#e2e8f0;--txt2:#94a3b8;--txt3:#64748b;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--purple:#a78bfa;--white:#fff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;line-height:1.6;}
+.wrap{max-width:640px;margin:0 auto;padding:2rem 1.25rem 4rem;}
+.brand{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;}
+.brand-dot{width:8px;height:8px;background:var(--teal);border-radius:50%;box-shadow:0 0 10px var(--teal-glow);}
+.brand-name{font-family:'Outfit',sans-serif;font-weight:600;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);}
+h1{font-family:'Outfit',sans-serif;font-size:clamp(1.6rem,5vw,2.25rem);font-weight:800;color:var(--white);margin-bottom:0.5rem;line-height:1.15;}
+.intro{font-size:0.95rem;color:var(--txt2);margin-bottom:0.35rem;}
+.intro-bold{color:var(--teal);font-weight:600;}
+.intro-sub{font-size:0.8rem;color:var(--txt3);margin-bottom:2rem;}
+.step{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;}
+.step-num{font-family:'Outfit',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);background:var(--teal-soft);display:inline-block;padding:0.2rem 0.6rem;border-radius:4px;margin-bottom:0.85rem;}
+.step-title{font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:0.35rem;}
+.step-desc{font-size:0.85rem;color:var(--txt2);margin-bottom:1rem;}
+.field{margin-bottom:0.85rem;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;}
+@media(max-width:500px){.field-row{grid-template-columns:1fr;}}
+.label-row{display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;}
+.label-row label{font-size:0.8rem;color:var(--txt2);font-weight:500;}
+.info-btn{width:16px;height:16px;border-radius:50%;background:var(--border);color:var(--txt3);font-size:0.6rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border:none;position:relative;flex-shrink:0;font-family:'DM Sans',sans-serif;}
+.info-btn:hover{background:var(--teal);color:var(--bg);}
+.tooltip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1e293b;border:1px solid var(--border);border-radius:8px;padding:0.65rem 0.85rem;width:280px;z-index:10;font-size:0.78rem;color:var(--txt2);line-height:1.55;font-weight:400;font-family:'DM Sans',sans-serif;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:#1e293b;}
+.info-btn:hover .tooltip,.info-btn:focus .tooltip{display:block;}
+@media(max-width:500px){.tooltip{left:auto;right:-20px;transform:none;width:240px;}.tooltip::after{left:auto;right:24px;transform:none;}}
+input,select{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.8rem;font-family:'DM Mono',monospace;font-size:0.9rem;color:var(--txt);outline:none;width:100%;transition:border-color 0.2s,background 0.2s;}
+input:focus,select:focus{border-color:var(--border-hi);background:var(--input-focus);}
+input::placeholder{color:var(--txt3);font-family:'DM Sans',sans-serif;font-size:0.78rem;}
+select{cursor:pointer;}select option{background:var(--card);color:var(--txt);}
+.helper{font-size:0.75rem;color:var(--teal);margin-top:0.25rem;display:block;}
+.helper a{color:var(--teal);text-decoration:underline;}.helper a:hover{color:var(--white);}
+.rates{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.6rem;margin-top:0.75rem;}
+@media(max-width:500px){.rates{grid-template-columns:1fr;}}
+.rate-box{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:0.5rem;text-align:center;}
+.rate-label{font-size:0.65rem;color:var(--txt3);text-transform:uppercase;letter-spacing:0.06em;}
+.rate-val{font-family:'DM Mono',monospace;font-size:1rem;color:var(--teal);font-weight:500;margin-top:0.15rem;}
+.analyze-btn{width:100%;padding:0.85rem;border:none;border-radius:10px;background:var(--teal);color:var(--bg);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;letter-spacing:0.03em;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;margin-top:0.5rem;}
+.analyze-btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--teal-glow);}
+.result{display:none;margin-top:1.25rem;}.result.show{display:block;}
+.result-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:1.75rem;text-align:center;margin-bottom:1rem;transition:border-color 0.4s;}
+.result-card.active{border-color:var(--teal);}
+.rec-badge{display:inline-block;font-family:'Outfit',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:0.04em;padding:0.35rem 1.5rem;border-radius:6px;margin-bottom:0.75rem;}
+.rec-badge.grade{background:rgba(34,197,94,0.15);color:var(--green);}
+.rec-badge.sell{background:rgba(239,68,68,0.15);color:var(--red);}
+.rec-badge.hold{background:rgba(245,158,11,0.15);color:var(--amber);}
+.rec-badge.crack{background:rgba(167,139,250,0.15);color:var(--purple);}
+.rec-explain{font-size:0.9rem;color:var(--txt2);max-width:460px;margin:0 auto;line-height:1.65;}
+/* Grader context note */
+.grader-note{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;margin-top:0.75rem;font-size:0.8rem;color:var(--txt2);line-height:1.6;text-align:left;max-width:460px;margin-left:auto;margin-right:auto;}
+.grader-note strong{color:var(--teal);}
+.math-toggle{background:none;border:1px solid var(--border);border-radius:8px;color:var(--txt3);font-size:0.8rem;padding:0.6rem 1rem;cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;font-family:'DM Sans',sans-serif;margin-bottom:0.5rem;transition:border-color 0.2s,color 0.2s;}
+.math-toggle:hover{border-color:var(--teal);color:var(--txt2);}
+.math-toggle .arr{transition:transform 0.3s;font-size:0.7rem;}
+.math-toggle.open .arr{transform:rotate(180deg);}
+.math-box{display:none;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem;}
+.math-box.show{display:block;}
+.math-row{display:flex;justify-content:space-between;padding:0.45rem 0;border-bottom:1px solid rgba(42,53,80,0.4);}
+.math-row:last-child{border-bottom:none;}
+.math-row-label{font-size:0.82rem;color:var(--txt2);}
+.math-row-val{font-family:'DM Mono',monospace;font-size:0.88rem;font-weight:500;}
+.math-row-val.pos{color:var(--green);}.math-row-val.neg{color:var(--red);}
+.next-steps{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;}
+.next-steps h3{font-family:'Outfit',sans-serif;font-size:0.95rem;font-weight:700;color:var(--teal);margin-bottom:0.75rem;}
+.next-step{display:flex;gap:0.65rem;margin-bottom:0.65rem;align-items:flex-start;}
+.next-step:last-child{margin-bottom:0;}
+.step-icon{width:22px;height:22px;border-radius:50%;background:var(--teal-soft);color:var(--teal);font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;}
+.next-step p{font-size:0.82rem;color:var(--txt2);line-height:1.55;}
+.next-step a{color:var(--teal);}
+.disc{font-size:0.72rem;color:var(--txt3);text-align:center;line-height:1.6;margin:1.5rem 0;}
+.how-toggle{background:none;border:1px solid var(--border);border-radius:8px;color:var(--txt3);font-size:0.8rem;padding:0.6rem 1rem;cursor:pointer;width:100%;text-align:left;display:flex;justify-content:space-between;align-items:center;font-family:'DM Sans',sans-serif;margin-bottom:0.5rem;transition:border-color 0.2s,color 0.2s;}
+.how-toggle:hover{border-color:var(--teal);color:var(--txt2);}
+.how-toggle .arr{transition:transform 0.3s;font-size:0.7rem;}
+.how-toggle.open .arr{transform:rotate(180deg);}
+.how-content{display:none;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;}
+.how-content.show{display:block;}
+.how-content h3{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--teal);margin:1.25rem 0 0.5rem;}.how-content h3:first-child{margin-top:0;}
+.how-content p{font-size:0.85rem;color:var(--txt2);margin-bottom:0.5rem;line-height:1.7;}
+.formula{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--txt);background:var(--input-bg);padding:0.5rem 0.75rem;border-radius:6px;margin:0.5rem 0;display:block;}
+.foot{text-align:center;padding-top:1rem;border-top:1px solid var(--border);}
+.foot a{color:var(--teal);text-decoration:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.82rem;letter-spacing:0.04em;}
+.foot a:hover{text-decoration:underline;}
+.foot .tag{font-size:0.72rem;color:var(--txt3);margin-top:0.3rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="brand"><div class="brand-dot"></div><span class="brand-name">CardPulse</span></div>
+<h1>Should you grade your card?</h1>
+<p class="intro">Answer a few questions and we'll do the math. <span class="intro-bold">No sign-up. No agenda.</span></p>
+<p class="intro-sub">Most apps push you to grade everything because they profit when you do. This tool shows you the honest answer.</p>
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-num">Step 1</div>
+  <div class="step-title">Tell us about your card</div>
+  <div class="step-desc">What card are you thinking about grading, and where would you send it?</div>
+
+  <div class="field">
+    <div class="label-row"><label>Card Name</label></div>
+    <input type="text" id="cardName" placeholder='e.g. Pikachu #26 Black Star Promo'>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <div class="label-row">
+        <label>Grading company</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Which grader?</strong> PSA is the most popular and has the highest resale values for most cards. CGC is cheaper and stronger in Pokemon. Beckett is the toughest grader but a Black Label can be worth many multiples of a PSA 10. SGC is fastest. TAG is a newer company with competitive resale.</span></button>
+      </div>
+      <select id="grader" onchange="onGraderChange()">
+        <option value="psa">PSA</option>
+        <option value="cgc">CGC</option>
+        <option value="beckett">Beckett (BGS)</option>
+        <option value="sgc">SGC</option>
+        <option value="tag">TAG</option>
+      </select>
+    </div>
+    <div class="field">
+      <div class="label-row">
+        <label>What condition is it in?</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Current condition:</strong> If your card hasn't been graded, pick "Raw / Ungraded." If it's already in a slab, pick the grade on it. If it's from a different grader than the one you selected, pick "Graded by another company" to evaluate a cross-grade.</span></button>
+      </div>
+      <select id="currentGrade">
+        <option value="raw">Raw / Ungraded</option>
+        <option value="graded8">Already graded 8</option>
+        <option value="graded9">Already graded 9</option>
+        <option value="graded95">Already graded 9.5</option>
+        <option value="crossgrade">Graded by another company</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field" style="max-width:300px;">
+    <div class="label-row">
+      <label>What did you pay for it? ($)</label>
+      <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Cost basis:</strong> How much you spent to get this card, including shipping. If you pulled it from a pack, enter what you paid for the pack.</span></button>
+    </div>
+    <input type="number" id="costBasis" placeholder="e.g. 125" step="0.01">
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-num">Step 2</div>
+  <div class="step-title">Look up current prices</div>
+  <div class="step-desc">What is this card selling for right now? Use recent <em>sold</em> prices, not active listings.</div>
+  <span class="helper">Look up your card on <a href="https://www.pricecharting.com/" target="_blank">PriceCharting.com</a>. It breaks out prices by grader, so use the prices for <strong id="graderLabel">PSA</strong>. You can also check <a href="https://www.ebay.com/sch/i.html?_nkw=&LH_Complete=1&LH_Sold=1" target="_blank">eBay Sold Listings</a>.</span>
+
+  <div class="field-row" style="margin-top:1rem;">
+    <div class="field">
+      <div class="label-row">
+        <label>Raw / Ungraded Price ($)</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Raw value:</strong> What the card sells for without any grade. On PriceCharting, this is the "Ungraded" price at the top.</span></button>
+      </div>
+      <input type="number" id="rawValue" placeholder="e.g. 66" step="0.01">
+    </div>
+    <div class="field">
+      <div class="label-row">
+        <label id="lbl8">Grade 8 Price ($)</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong id="tip8title">Grade 8:</strong> <span id="tip8body">A "Near Mint to Mint" result. Important for vintage cards where many submissions come back as 8s. Leave blank if you can't find this price.</span></span></button>
+      </div>
+      <input type="number" id="val8" placeholder="e.g. 68" step="0.01">
+    </div>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <div class="label-row">
+        <label id="lbl9">Grade 9 Price ($)</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong id="tip9title">Grade 9:</strong> <span id="tip9body">A "Mint" result. A strong grade. Check PriceCharting under "Grade 9" for your grader.</span></span></button>
+      </div>
+      <input type="number" id="val9" placeholder="e.g. 120" step="0.01">
+    </div>
+    <div class="field">
+      <div class="label-row">
+        <label id="lbl10">Grade 10 Price ($)</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong id="tip10title">Grade 10:</strong> <span id="tip10body">The top grade. Highest value but hardest to get. On PriceCharting, look for "PSA 10" (or your grader's equivalent).</span></span></button>
+      </div>
+      <input type="number" id="val10" placeholder="e.g. 1156" step="0.01">
+    </div>
+  </div>
+  <div class="field" style="max-width:300px;">
+    <div class="label-row">
+      <label>Grading cost ($)</label>
+      <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Grading cost:</strong> <span id="tipGradeCost">PSA charges $25+ depending on speed and card value (and may charge more if your card grades higher than expected). Include shipping if you can estimate it.</span></span></button>
+    </div>
+    <input type="number" id="gradingCost" placeholder="e.g. 25" step="0.01">
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-num">Step 3</div>
+  <div class="step-title">How likely is a top grade?</div>
+  <div class="step-desc">This helps estimate your odds. Look up how many copies have been graded and how many got the top grade.</div>
+  <span class="helper">Find this on <a href="https://www.psacard.com/pop" target="_blank" id="popLink">PSA's Pop Report</a>. Search your card and look at the population numbers.</span>
+
+  <div class="field-row" style="margin-top:1rem;">
+    <div class="field">
+      <div class="label-row">
+        <label id="lblPop10">How many 10s exist?</label>
+        <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Top grade population:</strong> The total number of copies that received the highest grade from your chosen grading company.</span></button>
+      </div>
+      <input type="number" id="pop10" placeholder="e.g. 367" oninput="calcRates()">
+    </div>
+    <div class="field">
+      <div class="label-row"><label id="lblPop9">How many 9s exist?</label></div>
+      <input type="number" id="pop9" placeholder="e.g. 817" oninput="calcRates()">
+    </div>
+  </div>
+  <div class="field" style="max-width:300px;">
+    <div class="label-row">
+      <label>Total copies ever graded?</label>
+      <button class="info-btn" tabindex="-1">?<span class="tooltip"><strong>Total graded:</strong> The sum of ALL copies submitted to this grading company, at any grade level.</span></button>
+    </div>
+    <input type="number" id="popTotal" placeholder="e.g. 2094" oninput="calcRates()">
+  </div>
+
+  <div class="rates">
+    <div class="rate-box"><div class="rate-label">Chance of 10</div><div class="rate-val" id="r10">—</div></div>
+    <div class="rate-box"><div class="rate-label">Chance of 9</div><div class="rate-val" id="r9">—</div></div>
+    <div class="rate-box"><div class="rate-label">Chance of 8 or lower</div><div class="rate-val" id="r8">—</div></div>
+  </div>
+
+  <span class="helper" style="margin-top:0.75rem;">Don't have pop data? Enter your own estimate below.</span>
+  <div class="field-row" style="margin-top:0.5rem;">
+    <div class="field">
+      <div class="label-row"><label>Or: your % chance of 10</label></div>
+      <input type="number" id="cust10" placeholder="e.g. 17" step="0.1" oninput="useCust()">
+    </div>
+    <div class="field">
+      <div class="label-row"><label>Your % chance of 9</label></div>
+      <input type="number" id="cust9" placeholder="e.g. 39" step="0.1" oninput="useCust()">
+    </div>
+  </div>
+</div>
+
+<button class="analyze-btn" onclick="analyze()">Show me the answer</button>
+
+<!-- RESULT -->
+<div class="result" id="result">
+  <div class="result-card active" id="recCard"></div>
+  <button class="math-toggle" id="mathToggle" onclick="toggleMath()"><span>Show the math behind this</span><span class="arr">▾</span></button>
+  <div class="math-box" id="mathBox"><div id="mathRows"></div></div>
+  <div class="next-steps" id="nextSteps"></div>
+  <p class="disc">This tool is based purely on the numbers you entered. It doesn't account for personal attachment, long-term strategy, cultural catalysts, or market timing. Think of it as one opinion, not the final answer.</p>
+</div>
+
+<!-- HOW IT WORKS -->
+<button class="how-toggle" id="howToggle" onclick="toggleHow()"><span>How the math works</span><span class="arr">▾</span></button>
+<div class="how-content" id="howContent">
+  <h3>Why This Tool Exists</h3>
+  <p>Most card collecting apps profit when you grade. This tool has no agenda. It runs the math and shows you the result.</p>
+  <h3>The Four Outcomes</h3>
+  <p><strong style="color:var(--green)">GRADE:</strong> Expected return significantly exceeds cost.</p>
+  <p><strong style="color:var(--amber)">HOLD:</strong> Margins too thin to justify grading right now.</p>
+  <p><strong style="color:var(--red)">SELL RAW:</strong> Grading would lose you money.</p>
+  <p><strong style="color:var(--purple)">CRACK & REGRADE:</strong> Resubmitting could improve your position.</p>
+  <h3>Key Formulas</h3>
+  <span class="formula">Blended EV = (10 value × %chance of 10) + (9 value × %chance of 9) + (8 value × %chance of 8 or lower)</span>
+  <p>Estimates what your card is likely worth after grading, weighted by probability of each grade.</p>
+  <span class="formula">Expected Profit = Blended EV − Raw Value − Grading Cost</span>
+  <span class="formula">ROI = Expected Profit ÷ (Raw Value + Grading Cost)</span>
+  <h3>Why We Include Grade 8</h3>
+  <p>Most calculators only model 10 vs 9. That's dangerously optimistic, especially for vintage cards where 60%+ come back as 8 or lower. Including 8 gives you a more honest picture.</p>
+  <h3>Limitations</h3>
+  <p>This uses three grade tiers. You could get a 7 or lower (worth less than the Grade 8 value used here). It also doesn't factor in turnaround time, shipping risk, or market changes while your card is locked up. If the tool says don't grade, that's a strong signal.</p>
+</div>
+
+<div class="foot">
+  <a href="https://getcardpulse.com">getcardpulse.com</a>
+  <p class="tag">Forward-looking intelligence for serious collectors.</p>
+</div>
+</div>
+
+<script>
+let R={r10:0,r9:0,r8:0},custom=false;
+
+const G={
+  psa:{
+    name:'PSA',top:'PSA 10',mid:'PSA 9',low:'PSA 8',
+    popUrl:'https://www.psacard.com/pop',
+    costTip:'PSA charges $25+ depending on speed and card value. Warning: if your card grades higher than the tier you paid for, PSA will charge you the higher tier price retroactively. Include shipping (~$15-20).',
+    note:'<strong>About PSA:</strong> PSA 10s have the most liquid resale market. Be aware that PSA may charge more than your base grading fee if your card ends up in a higher value tier after grading. This is a common surprise cost.',
+    tip10:'PSA 10 "Gem Mint" is the highest grade and commands the biggest premium. Look for "PSA 10" on PriceCharting.',
+    tip9:'PSA 9 "Mint" is a strong result. Most well-centered modern cards land here.',
+    tip8:'PSA 8 "Near Mint to Mint." Many vintage cards come back as 8s. This is your realistic downside scenario.'
+  },
+  cgc:{
+    name:'CGC',top:'CGC 10 Gem Mint',mid:'CGC 9',low:'CGC 8',
+    popUrl:'https://www.cgccards.com/certlookup/',
+    costTip:'CGC starts around $12-20/card depending on membership. No surprise upcharges. Turnaround is typically 35+ days. CGC also offers a "Pristine 10" tier above Gem Mint 10 that commands a significant premium.',
+    note:'<strong>About CGC:</strong> CGC 10 Gem Mint typically resells for less than PSA 10 on the same card. However, CGC Pristine 10 (a tier above Gem Mint) can approach or exceed PSA 10 values. If your card has a shot at Pristine, check that price on PriceCharting separately. CGC is stronger in Pokemon than in sports cards.',
+    tip10:'CGC 10 "Gem Mint" is their standard top grade. Note: CGC also has "Pristine 10" above this, which is rarer and more valuable. Check both prices on PriceCharting.',
+    tip9:'CGC 9 "Mint." Solid result but resale is noticeably lower than PSA 9 for most cards.',
+    tip8:'CGC 8 "Near Mint to Mint." Similar to PSA 8 in quality standards.'
+  },
+  beckett:{
+    name:'Beckett',top:'BGS 10 Pristine',mid:'BGS 9.5',low:'BGS 9',
+    popUrl:'https://www.beckett.com/grading',
+    costTip:'Beckett charges $18-35+ depending on tier. They charge based on estimated value upfront. Beckett is the toughest grader. A BGS 9.5 is more common than a BGS 10, and a Black Label (perfect 10/10/10/10 subgrades) is extremely rare.',
+    note:'<strong>About Beckett:</strong> Beckett is the strictest grader. A BGS 9.5 often sells for more than a CGC 10 or SGC 10 because buyers know Beckett\'s standards are tougher, making 9.5s strong candidates for cross-grading to PSA 10. The real prize is the Black Label (perfect 10 on all four subgrades). Black Labels can sell for 6-30x a PSA 10, sometimes $50,000+ on a $3,000 PSA 10 card. But they\'re extremely rare (less than 1% of submissions). If you don\'t get a Black Label, your BGS 9.5 still has strategic value as a crack-and-cross candidate.',
+    tip10:'BGS 10 "Pristine" is very hard to achieve. The ultra-rare Black Label (10/10/10/10 on all subgrades) can be worth 6-30x a PSA 10. Use the BGS 10 price here. Black Label is a separate tier entirely.',
+    tip9:'BGS 9.5 "Gem Mint" is the most common strong Beckett result. It often resells above CGC 10 and SGC 10 because of Beckett\'s tougher grading standards, making it a strong cross-grade candidate to PSA 10.',
+    tip8:'BGS 9 "Mint." Beckett 9s sell for significantly less than PSA 9s. This is your downside scenario with Beckett.'
+  },
+  sgc:{
+    name:'SGC',top:'SGC 10',mid:'SGC 9',low:'SGC 8',
+    popUrl:'https://www.sgccard.com/certverification',
+    costTip:'SGC charges $15/card with a fast 5-10 day turnaround. No surprise upcharges. Best for cards you want graded and sold quickly.',
+    note:'<strong>About SGC:</strong> SGC 10s sell for less than PSA 10s but SGC has the fastest turnaround of any major grader. Best for cards you want to flip quickly. The speed advantage means less market risk while your card is locked up.',
+    tip10:'SGC 10 "Pristine." Resells below PSA 10 but SGC\'s fast turnaround (5-10 days) means you can act on market timing.',
+    tip9:'SGC 9 "Mint." Decent result but lower resale than PSA 9.',
+    tip8:'SGC 8 "Near Mint to Mint." Lower resale but the fast turnaround limits your downside.'
+  },
+  tag:{
+    name:'TAG',top:'TAG 10',mid:'TAG 9',low:'TAG 8',
+    popUrl:'https://www.taggrading.com',
+    costTip:'TAG charges $15-39/card depending on service level. No surprise upcharges. Turnaround is 10-45 days depending on tier. Their grading uses microscope-level analysis with a 1000-point scoring system.',
+    note:'<strong>About TAG:</strong> TAG 10s are increasingly competitive with PSA 10s on resale, sometimes even beating them. No hidden upcharges. Their microscope-level grading detail is the most transparent in the industry. TAG is a newer company, so long-term market acceptance is still being established, but early results are very promising.',
+    tip10:'TAG 10 "Gem Mint." Surprisingly competitive with PSA 10 on resale. TAG uses a 1000-point scoring system so you see exactly why your card got the grade it did.',
+    tip9:'TAG 9. Solid grade with full scoring transparency.',
+    tip8:'TAG 8. TAG\'s detailed scoring means you\'ll know exactly what held your card back.'
+  }
+};
+
+function onGraderChange(){
+  const g=G[document.getElementById('grader').value];
+  document.getElementById('graderLabel').textContent=g.name;
+  document.getElementById('lbl8').textContent=g.low+' Price ($)';
+  document.getElementById('lbl9').textContent=g.mid+' Price ($)';
+  document.getElementById('lbl10').textContent=g.top+' Price ($)';
+  document.getElementById('tip8title').textContent=g.low+':';
+  document.getElementById('tip8body').textContent=g.tip8;
+  document.getElementById('tip9title').textContent=g.mid+':';
+  document.getElementById('tip9body').textContent=g.tip9;
+  document.getElementById('tip10title').textContent=g.top+':';
+  document.getElementById('tip10body').textContent=g.tip10;
+  document.getElementById('tipGradeCost').textContent=g.costTip;
+  document.getElementById('popLink').href=g.popUrl;
+  document.getElementById('lblPop10').textContent='How many '+g.top.split(' ').pop()+'s exist?';
+  document.getElementById('lblPop9').textContent='How many '+g.mid.split(' ').pop()+'s exist?';
+}
+
+function calcRates(){
+  const a=+document.getElementById('pop10').value||0,b=+document.getElementById('pop9').value||0,t=+document.getElementById('popTotal').value||0;
+  if(t>0&&!custom){R.r10=a/t;R.r9=b/t;R.r8=Math.max(0,1-R.r10-R.r9);document.getElementById('r10').textContent=(R.r10*100).toFixed(1)+'%';document.getElementById('r9').textContent=(R.r9*100).toFixed(1)+'%';document.getElementById('r8').textContent=(R.r8*100).toFixed(1)+'%';}
+}
+function useCust(){
+  const a=parseFloat(document.getElementById('cust10').value),b=parseFloat(document.getElementById('cust9').value);
+  if(a>=0&&b>=0){custom=true;R.r10=a/100;R.r9=b/100;R.r8=Math.max(0,1-R.r10-R.r9);document.getElementById('r10').textContent=(R.r10*100).toFixed(1)+'%';document.getElementById('r9').textContent=(R.r9*100).toFixed(1)+'%';document.getElementById('r8').textContent=(R.r8*100).toFixed(1)+'%';}else{custom=false;calcRates();}
+}
+
+function $(id){return document.getElementById(id);}
+function fmt(n){if(isNaN(n))return'—';const s='$'+Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});return n<0?'-'+s:s;}
+function pct(n){return isNaN(n)?'—':(n*100).toFixed(1)+'%';}
+
+function analyze(){
+  const raw=+$('rawValue').value||0,p8=+$('val8').value||0,p9=+$('val9').value||0,p10=+$('val10').value||0,gc=+$('gradingCost').value||0,cb=+$('costBasis').value||0;
+  const grade=$('currentGrade').value;
+  const g=G[$('grader').value];
+
+  if(!raw||!p9||!p10||!gc||(R.r10<=0&&R.r9<=0)){alert('Please fill in the price fields and grade probability (Steps 2 and 3) so we can calculate.');return;}
+
+  const ev=(p10*R.r10)+(p9*R.r9)+(p8*R.r8),profit=ev-raw-gc,risk=raw+gc,roi=risk>0?profit/risk:0;
+  const sp10=p10-raw,sp9=p9-raw;
+  const isGraded=grade==='graded8'||grade==='graded9'||grade==='graded95'||grade==='crossgrade';
+  const crackEV=ev-cb-gc;
+
+  let rec,cls,txt,steps;
+
+  if(isGraded&&crackEV>cb*0.3){
+    rec='CRACK & REGRADE';cls='crack';
+    txt=`Based on the numbers, cracking and resubmitting to ${g.name} could pay off. The expected value after regrading (${fmt(ev)}) exceeds your cost basis (${fmt(cb)}) plus grading cost (${fmt(gc)}) by a meaningful margin.`;
+    steps=crackSteps(g);
+  }else if(isGraded&&crackEV<0){
+    rec='HOLD';cls='hold';
+    txt=`The math doesn't support cracking and regrading with ${g.name} right now. You'd likely lose money after factoring in grading costs. Keep your current slab and revisit if prices shift.`;
+    steps=holdSteps(g);
+  }else if(profit>raw*0.5){
+    rec='GRADE IT';cls='grade';
+    txt=`The expected profit from grading with ${g.name} (${fmt(profit)}) is strong relative to the card's raw value (${fmt(raw)}). Even accounting for the chance of getting less than a top grade, the math supports submitting.`;
+    steps=gradeSteps(g);
+  }else if(profit<0){
+    rec='SELL RAW';cls='sell';
+    txt=`Grading with ${g.name} would likely cost you money. The expected value after grading (${fmt(ev)}) doesn't cover the raw value (${fmt(raw)}) plus grading fee (${fmt(gc)}). You're better off selling as-is or holding raw.`;
+    steps=sellSteps(g);
+  }else{
+    rec='HOLD';cls='hold';
+    txt=`The margins are thin with ${g.name}. There's a small expected profit (${fmt(profit)}), but it's not enough to justify the cost and wait time. Revisit if prices change or if a cultural catalyst is coming (set reprint, anniversary, media release).`;
+    steps=holdSteps(g);
+  }
+
+  $('result').classList.add('show');
+  $('recCard').innerHTML=`<div class="rec-badge ${cls}">${rec}</div><p class="rec-explain">${txt}</p><div class="grader-note">${g.note}</div>`;
+  $('nextSteps').innerHTML=steps;
+
+  const rows=[
+    {l:`Raw → ${g.top} spread`,v:fmt(sp10),c:sp10>0?'pos':''},
+    {l:`Raw → ${g.mid} spread`,v:fmt(sp9),c:sp9>0?'pos':''},
+    {l:'Total at risk (raw + grading)',v:fmt(risk),c:''},
+    {l:'Blended expected value',v:fmt(ev),c:ev>risk?'pos':''},
+    {l:'Expected profit from grading',v:fmt(profit),c:profit>0?'pos':'neg'},
+    {l:'Return on investment (ROI)',v:pct(roi),c:roi>0?'pos':'neg'},
+  ];
+  $('mathRows').innerHTML=rows.map(r=>`<div class="math-row"><span class="math-row-label">${r.l}</span><span class="math-row-val ${r.c}">${r.v}</span></div>`).join('');
+  $('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function gradeSteps(g){
+  const links={psa:'https://www.psacard.com/services/tradingcardgrading',cgc:'https://www.cgccards.com/submit/',beckett:'https://www.beckett.com/grading/submit',sgc:'https://www.sgccard.com/submitcards',tag:'https://www.taggrading.com/submit'};
+  const key=$('grader').value;
+  return `<h3>What to do next with ${g.name}</h3>
+  <div class="next-step"><div class="step-icon">1</div><p><strong>Submit to ${g.name}.</strong> <a href="${links[key]}" target="_blank">Go to their submission page</a> and choose a service tier that matches your card's value.</p></div>
+  ${key==='psa'?'<div class="next-step"><div class="step-icon">!</div><p><strong>Watch for upcharges.</strong> If your card grades into a higher value tier, PSA will charge you the higher fee. Budget for this possibility on valuable cards.</p></div>':''}
+  ${key==='beckett'?'<div class="next-step"><div class="step-icon">!</div><p><strong>Shooting for Black Label?</strong> It\'s extremely rare (less than 1% of submissions), but if you get one, the value can be 6-30x a PSA 10. Even a BGS 9.5 has strategic value as a cross-grade candidate to PSA 10.</p></div>':''}
+  <div class="next-step"><div class="step-icon">2</div><p><strong>Protect your card for shipping.</strong> Penny sleeve + top loader + painter's tape (never tape the card). Place in a small box with padding. Ship with tracking and insurance.</p></div>
+  <div class="next-step"><div class="step-icon">3</div><p><strong>Be patient.</strong> Turnaround varies by company and tier. Your card's value may change while it's being graded.</p></div>`;
+}
+
+function sellSteps(g){
+  return `<h3>What to do next</h3>
+  <div class="next-step"><div class="step-icon">1</div><p><strong>List it on eBay or TCGPlayer.</strong> eBay auction starting at $0.99 with clear photos often gets the best price for raw cards.</p></div>
+  <div class="next-step"><div class="step-icon">2</div><p><strong>Take clear photos.</strong> Front, back, and any flaws. Natural lighting, plain background.</p></div>
+  <div class="next-step"><div class="step-icon">3</div><p><strong>Or hold it raw.</strong> "Sell raw" means grading isn't worth the cost at current prices. If you like the card, keep it. Revisit if prices shift.</p></div>
+  ${$('grader').value!=='psa'?'<div class="next-step"><div class="step-icon">4</div><p><strong>Consider trying a different grader.</strong> The math might work better with a different company. Change the grader in Step 1 and re-run.</p></div>':''}`;
+}
+
+function holdSteps(g){
+  return `<h3>What to do next</h3>
+  <div class="next-step"><div class="step-icon">1</div><p><strong>Protect it.</strong> Penny sleeve + top loader minimum. Magnetic case for higher value cards.</p></div>
+  <div class="next-step"><div class="step-icon">2</div><p><strong>Store properly.</strong> Cool, dry, away from sunlight.</p></div>
+  <div class="next-step"><div class="step-icon">3</div><p><strong>Revisit in 3-6 months.</strong> Prices shift with new releases, anniversaries, and cultural events. Re-run this tool when conditions change.</p></div>
+  <div class="next-step"><div class="step-icon">4</div><p><strong>Try a different grader?</strong> The economics vary by company. Change the grader in Step 1 to compare.</p></div>`;
+}
+
+function crackSteps(g){
+  return `<h3>What to do next</h3>
+  <div class="next-step"><div class="step-icon">1</div><p><strong>Be careful cracking.</strong> Use a plastic spudger to pry the slab open gently. Never use metal tools near the card. Watch a YouTube tutorial first.</p></div>
+  <div class="next-step"><div class="step-icon">2</div><p><strong>Inspect before resubmitting.</strong> Check for handling marks from the original slabbing. If the card looks clean, proceed.</p></div>
+  <div class="next-step"><div class="step-icon">3</div><p><strong>Submit to ${g.name}.</strong> If you're crossing from another grader, research the pop for your card at ${g.name} specifically. A BGS 9.5 has strong odds of crossing to a PSA 10 because of Beckett's tougher standards.</p></div>`;
+}
+
+function toggleMath(){$('mathToggle').classList.toggle('open');$('mathBox').classList.toggle('show');}
+function toggleHow(){$('howToggle').classList.toggle('open');$('howContent').classList.toggle('show');}
+
+// Init labels
+onGraderChange();
+</script>
+</body>
+</html>
