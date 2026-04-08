@@ -88,6 +88,20 @@ select{cursor:pointer;}select option{background:var(--card);color:var(--txt);}
 .how-content h3{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--teal);margin:1.25rem 0 0.5rem;}.how-content h3:first-child{margin-top:0;}
 .how-content p{font-size:0.85rem;color:var(--txt2);margin-bottom:0.5rem;line-height:1.7;}
 .formula{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--txt);background:var(--input-bg);padding:0.5rem 0.75rem;border-radius:6px;margin:0.5rem 0;display:block;}
+/* Email capture */
+.email-capture{background:linear-gradient(135deg,rgba(45,212,160,0.08),rgba(45,212,160,0.03));border:1px solid rgba(45,212,160,0.25);border-radius:12px;padding:1.5rem;margin-bottom:1rem;text-align:center;}
+.email-capture h3{font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:var(--white);margin-bottom:0.4rem;}
+.email-capture p{font-size:0.82rem;color:var(--txt2);margin-bottom:1rem;line-height:1.55;}
+.email-row{display:flex;gap:0.5rem;max-width:420px;margin:0 auto;}
+@media(max-width:500px){.email-row{flex-direction:column;}}
+.email-row input{flex:1;background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.8rem;font-family:'DM Sans',sans-serif;font-size:0.85rem;color:var(--txt);outline:none;}
+.email-row input:focus{border-color:var(--teal);}
+.email-row input::placeholder{color:var(--txt3);}
+.email-row button{background:var(--teal);color:var(--bg);border:none;border-radius:8px;padding:0.6rem 1.25rem;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:transform 0.15s,box-shadow 0.15s;}
+.email-row button:hover{transform:translateY(-1px);box-shadow:0 4px 16px var(--teal-glow);}
+.email-thanks{display:none;font-size:0.85rem;color:var(--teal);font-weight:500;margin-top:0.5rem;}
+.email-thanks.show{display:block;}
+.email-fine{font-size:0.7rem;color:var(--txt3);margin-top:0.65rem;}
 .foot{text-align:center;padding-top:1rem;border-top:1px solid var(--border);}
 .foot a{color:var(--teal);text-decoration:none;font-family:'Outfit',sans-serif;font-weight:600;font-size:0.82rem;letter-spacing:0.04em;}
 .foot a:hover{text-decoration:underline;}
@@ -258,6 +272,19 @@ select{cursor:pointer;}select option{background:var(--card);color:var(--txt);}
   <button class="math-toggle" id="mathToggle" onclick="toggleMath()"><span>Show the math behind this</span><span class="arr">▾</span></button>
   <div class="math-box" id="mathBox"><div id="mathRows"></div></div>
   <div class="next-steps" id="nextSteps"></div>
+
+  <!-- EMAIL CAPTURE -->
+  <div class="email-capture" id="emailCapture">
+    <h3>Want to know which cards are worth it before the market catches on?</h3>
+    <p>We send one free analysis per month. One card, the math behind it, and whether to buy, grade, or wait. No spam, no hype, just the honest signal.</p>
+    <div class="email-row" id="emailForm">
+      <input type="email" id="emailInput" placeholder="your email">
+      <button onclick="submitEmail()">Send it to me</button>
+    </div>
+    <p class="email-thanks" id="emailThanks">you're in. first one's coming soon.</p>
+    <p class="email-fine">No spam. Unsubscribe anytime. We don't sell your info.</p>
+  </div>
+
   <p class="disc">This tool runs on the numbers you gave it. It doesn't know your card's sentimental value, your financial situation, or what the market will do next week. It's one input into your decision, not the decision itself. The best collectors we know treat tools like this as a sanity check, not a green light.</p>
 </div>
 
@@ -463,6 +490,35 @@ function crackSteps(g){
 
 function toggleMath(){$('mathToggle').classList.toggle('open');$('mathBox').classList.toggle('show');}
 function toggleHow(){$('howToggle').classList.toggle('open');$('howContent').classList.toggle('show');}
+
+function submitEmail(){
+  const email=$('emailInput').value.trim();
+  if(!email||!email.includes('@')){$('emailInput').style.borderColor='var(--red)';return;}
+
+  // ---- MAILCHIMP INTEGRATION ----
+  // Replace this section with your Mailchimp form post when ready.
+  // For now, we use a simple Mailchimp subscribe URL via jsonp.
+  // To get your URL: Mailchimp > Audience > Signup forms > Embedded forms
+  // Find the action URL and the hidden field name (usually MERGE0 for email)
+
+  const MAILCHIMP_URL = 'https://getcardpulse.us3.list-manage.com/subscribe/post-json?u=a25fe6d48e95457ee5cfb993c&id=7afdabe9c3&f_id=0049bce2f0&c=?';
+  // Example: 'https://getcardpulse.us21.list-manage.com/subscribe/post-json?u=XXXXX&id=XXXXX&c=?'
+
+  if(MAILCHIMP_URL){
+    const url = MAILCHIMP_URL + '&EMAIL=' + encodeURIComponent(email);
+    const script = document.createElement('script');
+    script.src = url;
+    document.body.appendChild(script);
+  }
+  // ---- END MAILCHIMP ----
+
+  // Show thank you regardless (good UX even if Mailchimp isn't connected yet)
+  $('emailForm').style.display='none';
+  $('emailThanks').classList.add('show');
+
+  // Also log to console so you can see signups during testing
+  console.log('CardPulse email signup:', email);
+}
 
 // Init labels
 onGraderChange();
