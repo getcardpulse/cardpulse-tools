@@ -265,7 +265,10 @@ select{cursor:pointer;}select option{background:var(--card);color:var(--txt);}
   </div>
 </div>
 
-<p style="font-size:0.75rem;color:var(--txt3);text-align:center;margin:0.75rem 0 0.25rem;line-height:1.55;">This tool assumes your card is already in gradeable condition. It calculates whether grading makes financial sense based on current prices and population data. It does not assess physical condition.</p>
+<div style="background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:0.85rem 1rem;margin:0.75rem 0 0.5rem;text-align:left;">
+<p style="font-size:0.8rem;color:var(--txt2);line-height:1.6;margin-bottom:0.5rem;"><strong style="color:var(--teal);">What this tool does:</strong> It calculates whether grading makes <em>financial</em> sense based on current market prices and population data. It does not assess physical condition.</p>
+<p style="font-size:0.8rem;color:var(--txt2);line-height:1.6;margin:0;"><strong style="color:var(--teal);">What this tool doesn't do:</strong> It doesn't evaluate personal, preservation, or security reasons to grade. If you want your card protected in a slab regardless of the financial math, that's a completely valid reason to grade that falls outside what this tool measures.</p>
+</div>
 <button class="analyze-btn" onclick="analyze()">Show me the answer</button>
 
 <!-- RESULT -->
@@ -441,11 +444,11 @@ function analyze(){
     }
   }else if(profit<0){
     rec='SELL RAW';cls='sell';
-    txt=`Grading with ${g.name} would cost more than it's likely to return. Expected value after grading (${fmt(ev)}) doesn't clear the raw price (${fmt(raw)}) plus fees (${fmt(gc)}). That's not a close call. Sell it raw, hold it raw, or wait for the market to change. Don't grade a card just because everyone else is grading.`;
+    txt=`Grading with ${g.name} would cost more than it's likely to return. Expected value after grading (${fmt(ev)}) doesn't clear the raw price (${fmt(raw)}) plus fees (${fmt(gc)}). That's not a close call. Sell it raw, hold it raw, or wait for the market to change. Don't grade a card just because everyone else is grading. (Note: this is purely a financial assessment. If you want this card graded for preservation, display, or sentimental reasons, those are valid motivations that this tool doesn't weigh.)`;
     steps=sellSteps(g);
   }else{
     rec='HOLD';cls='hold';
-    txt=`It's close, but not close enough. There's a small expected profit (${fmt(profit)}), but thin margins mean any shift in the market, a dip in comps, a longer turnaround, could erase it. In a hot market, it's tempting to submit everything. This is one to sit on. Revisit if prices move or a real catalyst emerges (set release, anniversary, media event).`;
+    txt=`It's close, but not close enough. There's a small expected profit (${fmt(profit)}), but thin margins mean any shift in the market, a dip in comps, a longer turnaround, could erase it. In a hot market, it's tempting to submit everything. This is one to sit on. Revisit if prices move or a real catalyst emerges (set release, anniversary, media event). (If your goal is preservation or personal significance rather than profit, grading can still make sense for reasons this tool doesn't measure.)`;
     steps=holdSteps(g);
   }
 
